@@ -1,0 +1,28 @@
+language: go
+
+go:
+  - 1.12.x
+  - 1.13.x
+  - 1.14.x
+os: linux
+
+before_install:
+  - go get -u github.com/golangci/golangci-lint/cmd/golangci-lint
+
+notifications:
+  email: false
+
+script:
+  - go test -v -race -covermode=count -coverprofile=coverage.out
+  - golangci-lint run -v
+  - go build -o tamagochi
+
+env:
+  global:
+    - GOARCH=amd64
+    - GOOS=linux
+    - GO111MODULE=on
+
+matrix:
+  allow_failures:
+    - go: tip
