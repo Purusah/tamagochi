@@ -1,6 +1,9 @@
 package tamagochi
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestToSnakeCase(t *testing.T) {
 	tests := []struct {
@@ -22,5 +25,21 @@ func TestToSnakeCase(t *testing.T) {
 		if have != test.want {
 			t.Errorf("input=%q:\nhave: %q\nwant: %q", test.input, have, test.want)
 		}
+	}
+}
+
+func TestUnwrapMonadicFunc(t *testing.T) {
+	s := strings.Builder{}
+	testStr := "abc"
+
+	cnt := monadicStrFunction{column: Column(testStr)}
+	if unwrapMonadicFunc(&s, "COUNT", cnt).String() != "COUNT(abc)" {
+		t.Error("Error monadicStrFunction")
+	}
+	s.Reset()
+
+	cnt = monadicStrFunction{alias: "CNT", column: Column(testStr)}
+	if unwrapMonadicFunc(&s, "COUNT", cnt).String() != "COUNT(abc) AS CNT" {
+		t.Error("Error monadicStrFunction with alias")
 	}
 }
