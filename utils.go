@@ -35,13 +35,13 @@ func getStrFromIntType(i interface{}) string {
 func getJoinType(j JoinKind) string {
 	switch j {
 	case innerJoin:
-		return "INNER"
+		return innerJoinSql
 	case leftJoin:
-		return "LEFT"
+		return leftJoinSql
 	case rightJoin:
-		return "RIGHT"
+		return rightJoinSql
 	case fullJoin:
-		return "FULL"
+		return fullJoinSql
 	default:
 		panic("Unknown JOIN type")
 	}
@@ -60,10 +60,10 @@ func unwrapInterface(s *strings.Builder, t reflect.Type, v interface{}) *strings
 
 func unwrapMonadicFunc(s *strings.Builder, o string, e monadicStrFunction) *strings.Builder {
 	s.WriteString(o)
-	s.WriteString("(")
+	s.WriteString(lParenthesisSql)
 	e.column.apply(s)
-	s.WriteString(")")
-	if e.alias != "" {
+	s.WriteString(rParenthesisSql)
+	if e.alias != emptyStrSql {
 		s.WriteString(fmt.Sprintf(" AS %v", e.alias))
 	}
 	return s
@@ -73,8 +73,8 @@ func unwrapDyadicExpr(s *strings.Builder, o string, e dyadicInterfaceOperator) *
 	for i, f := range []interface{}{e.left, e.right} {
 		t := getType(f)
 		s = unwrapInterface(s, t, f)
-		s.WriteString(space)
 		if i + 1 == 1 {
+			s.WriteString(space)
 			s.WriteString(o)
 			s.WriteString(space)
 		}
@@ -87,7 +87,9 @@ func unwrapPolyadicExpr(s *strings.Builder, o string, e polyadicExpressionOperat
 	for i, f := range e.exprs {
 		s = f.apply(s)
 		if i + 1 != totalField {
+			s.WriteString(space)
 			s.WriteString(o)
+			s.WriteString(space)
 		}
 	}
 	return s

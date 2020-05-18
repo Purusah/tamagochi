@@ -2,6 +2,7 @@ package tamagochi
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -100,7 +101,9 @@ type eLimit struct {
 }
 
 func (e eLimit) apply(s *strings.Builder) *strings.Builder {
-	s.WriteString(fmt.Sprintf("LIMIT %v", e.Limit))
+	s.WriteString(limitSql)
+	s.WriteString(space)
+	s.WriteString(strconv.Itoa(e.Limit))
 	return s
 }
 

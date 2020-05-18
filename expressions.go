@@ -12,7 +12,7 @@ type eColumn struct {
 }
 
 func (e eColumn) apply(s *strings.Builder) *strings.Builder {
-	if e.alias != "" {
+	if e.alias != emptyStrSql {
 		s.WriteString(fmt.Sprintf("%v AS %v", e.column, e.alias))
 	} else {
 		s.WriteString(e.column)
@@ -36,7 +36,7 @@ type eCount struct {
 }
 
 func (e eCount) apply(s *strings.Builder) *strings.Builder {
-	return unwrapMonadicFunc(s, "COUNT", e.monadicStrFunction)
+	return unwrapMonadicFunc(s, countSql, e.monadicStrFunction)
 }
 
 func (e eCount) As(alias string) Expression {
@@ -55,7 +55,7 @@ type eAnd struct {
 }
 
 func (e eAnd) apply(s *strings.Builder) *strings.Builder {
-	return unwrapPolyadicExpr(s, " AND ", e.polyadicExpressionOperator)
+	return unwrapPolyadicExpr(s, andSql, e.polyadicExpressionOperator)
 }
 
 func (e eAnd) As(_ string) Expression {
@@ -73,7 +73,7 @@ type eOr struct {
 }
 
 func (e eOr) apply(s *strings.Builder) *strings.Builder {
-	return unwrapPolyadicExpr(s, " OR ", e.polyadicExpressionOperator)
+	return unwrapPolyadicExpr(s, orSql, e.polyadicExpressionOperator)
 }
 
 func (e eOr) As(_ string) Expression {
@@ -145,7 +145,7 @@ type eEq struct {
 }
 
 func (e eEq) apply(s *strings.Builder) *strings.Builder {
-	return unwrapDyadicExpr(s, "=", e.dyadicInterfaceOperator)
+	return unwrapDyadicExpr(s, eqSql, e.dyadicInterfaceOperator)
 }
 
 func (e eEq) As(_ string) Expression {
@@ -163,7 +163,7 @@ type eNe struct {
 }
 
 func (e eNe) apply(s *strings.Builder) *strings.Builder {
-	return unwrapDyadicExpr(s, "<>", e.dyadicInterfaceOperator)
+	return unwrapDyadicExpr(s, neSql, e.dyadicInterfaceOperator)
 }
 
 func (e eNe) As(_ string) Expression {
@@ -181,7 +181,7 @@ type eLe struct {
 }
 
 func (e eLe) apply(s *strings.Builder) *strings.Builder {
-	return unwrapDyadicExpr(s, "<=", e.dyadicInterfaceOperator)
+	return unwrapDyadicExpr(s, leSql, e.dyadicInterfaceOperator)
 }
 
 func (e eLe) As(_ string) Expression {
@@ -199,7 +199,7 @@ type eGe struct {
 }
 
 func (e eGe) apply(s *strings.Builder) *strings.Builder {
-	return unwrapDyadicExpr(s, ">=", e.dyadicInterfaceOperator)
+	return unwrapDyadicExpr(s, geSql, e.dyadicInterfaceOperator)
 }
 
 func (e eGe) As(_ string) Expression {
@@ -217,7 +217,8 @@ type eOn struct {
 }
 
 func (e eOn) apply(s *strings.Builder) *strings.Builder {
-	return unwrapDyadicExpr(s, "=", e.dyadicInterfaceOperator)
+	// TODO FIX
+	return unwrapDyadicExpr(s, eqSql, e.dyadicInterfaceOperator)
 }
 
 func (e eOn) As(_ string) Expression {
